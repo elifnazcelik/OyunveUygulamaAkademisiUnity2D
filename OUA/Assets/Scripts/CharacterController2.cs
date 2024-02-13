@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterController2 : MonoBehaviour
 {
-    public float jumpForce=2.0f;
+    public float jumpForce= 4.0f;
     public float speed=1.0f;
     public float moveDirection;
 
@@ -37,6 +37,11 @@ public class CharacterController2 : MonoBehaviour
         }
 
         rigidbody2D.velocity = new Vector2(speed* moveDirection, rigidbody2D.velocity.y);
+        if(jump == true)
+        {
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce); // x is constant, y has jump force
+            jump = false;
+        }
     }
 
     private void Update()
@@ -59,6 +64,21 @@ public class CharacterController2 : MonoBehaviour
         {
             moveDirection = 0.0f;
             animator.SetFloat("speed", 0.0f);
+        }
+        if( grounded == true && Input.GetKey(KeyCode.W)) //Jump State
+        {
+            jump = true;
+            grounded = false;
+            animator.SetTrigger("jump");
+            animator.SetBool("grounded", false);
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            animator.SetBool("grounded", true);
+            grounded = true;
         }
     }
 }
